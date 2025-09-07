@@ -1,0 +1,7 @@
+pyinstaller==6.*
+PyQt5==5.15.*
+python-docx==1.2.*
+pandas==2.2.*        # or 2.1.*, both fine on 3.11
+TTS==0.22.0
+torch==2.2.*         # CPU
+torchaudio==2.2.*    # CPU

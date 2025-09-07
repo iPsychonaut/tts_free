@@ -1,0 +1,39 @@
+# Create a clean build env on Python 3.11
+conda create -n tts_desktop python=3.11 -y
+conda activate tts_desktop
+
+conda install -c conda-forge sox
+
+# install deps (CPU-only torch to keep it lean)
+pip install --upgrade pip
+pip install pyinstaller PyQt5 python-docx pandas "TTS==0.22.0" piper-tts \
+  "torch==2.2.*" "torchaudio==2.2.*" --extra-index-url https://download.pytorch.org/whl/cpu
+
+printf '\nexport PIPER_BIN="$HOME/bin/piper/piper"\nexport PIPER_MODEL_DIR="$HOME/bin/piper"\n' >> ~/.bashrc
+
+# For IOS/Linux
+pyinstaller --clean --noconfirm --onefile \
+  --add-binary "piper/piper:piper" \
+  --add-data   "piper/en_GB-cori-high.onnx:piper" \
+  --add-data   "piper/en_GB-cori-high.onnx.json:piper" \
+  --add-data   "piper/en_GB-semaine-medium.onnx:piper" \
+  --add-data   "piper/en_GB-semaine-medium.onnx.json:piper" \
+  --add-data   "piper/en_GB-southern_english_female-low.onnx:piper" \
+  --add-data   "piper/en_GB-southern_english_female-low.onnx.json:piper" \
+  --collect-submodules PyQt5.QtMultimedia \
+  --collect-data PyQt5 \
+  app.py
+
+
+# For Windows
+pyinstaller --clean --noconfirm --onefile ^
+  --add-binary "piper\piper.exe;piper" ^
+  --add-data   "piper\en_GB-cori-high.onnx;piper" ^
+  --add-data   "piper\en_GB-cori-high.onnx.json;piper" ^
+  --add-data   "piper\en_GB-semaine-medium.onnx;piper" ^
+  --add-data   "piper\en_GB-semaine-medium.onnx.json;piper" ^
+  --add-data   "piper\en_GB-southern_english_female-low.onnx;piper" ^
+  --add-data   "piper\en_GB-southern_english_female-low.onnx.json;piper" ^
+  --collect-submodules PyQt5.QtMultimedia ^
+  --collect-data PyQt5 ^
+  app.py
